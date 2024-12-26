@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">إدارة المشرفين</h2>
+
+    <form method="POST" action="{{ url_for('add_admin') }}">
+        <div class="mb-3">
+            <label for="username" class="form-label">اسم المستخدم</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">البريد الإلكتروني</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">كلمة المرور</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">إضافة مشرف</button>
+    </form>
+
+    
+</div>
+
+<div class="container mt-5">
+    <h2 class="text-center">إدارة المستخدمين</h2>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>اسم المستخدم</th>
+                <th>البريد الإلكتروني</th>
+                <th>الصلاحية</th>
+                <th>تاريخ الإنشاء</th>
+                <th>التعديل والحذف</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% if user.is_admin %}
+                    <span class="badge bg-primary">مشرف</span>
+                    {% else %}
+                    <span class="badge bg-secondary">مستخدم</span>
+                    {% endif %}
+                </td>
+                <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    {% if user.is_admin %}
+                    <form method="GET" action="{{ url_for('edit_admin', admin_id=user.id) }}">
+                        <button type="submit" class="btn btn-warning">تعديل</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('delete_admin', admin_id=user.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">حذف</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

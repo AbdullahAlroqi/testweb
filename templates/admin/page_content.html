@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin') }}">
+                            <i class="fas fa-home me-2"></i>
+                            لوحة التحكم
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_contact_requests') }}">
+                            <i class="fas fa-envelope me-2"></i>
+                            طلبات الاتصال
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('add_project') }}">
+                            <i class="fas fa-project-diagram me-2"></i>
+                            المشاريع
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('admin_pages') }}">
+                            <i class="fas fa-file-alt me-2"></i>
+                            محتوى الصفحات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_settings') }}">
+                            <i class="fas fa-cog me-2"></i>
+                            الإعدادات
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">إدارة محتوى الصفحات</h1>
+                <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addContentModal">
+                    <i class="fas fa-plus me-2"></i>إضافة محتوى جديد
+                </button>
+            </div>
+
+            <!-- Content sections -->
+            <div class="row">
+                {% for content in page_contents %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ content.page }} - {{ content.section }}</h5>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-light" onclick="editContent('{{ content.id }}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-light" onclick="deleteContent('{{ content.id }}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="content-preview">{{ content.content[:200] }}...</div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Add Content Modal -->
+<div class="modal fade" id="addContentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">إضافة محتوى جديد</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="contentForm">
+                    <div class="mb-3">
+                        <label class="form-label">الصفحة</label>
+                        <input type="text" class="form-control" name="page" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">القسم</label>
+                        <input type="text" class="form-control" name="section" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">المحتوى</label>
+                        <textarea class="form-control" name="content" rows="5" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-dark" onclick="saveContent()">حفظ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Content Modal -->
+<div class="modal fade" id="editContentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">تعديل المحتوى</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editContentForm">
+                    <input type="hidden" name="content_id">
+                    <div class="mb-3">
+                        <label class="form-label">الصفحة</label>
+                        <input type="text" class="form-control" name="page" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">القسم</label>
+                        <input type="text" class="form-control" name="section" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">المحتوى</label>
+                        <textarea class="form-control" name="content" rows="5" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-dark" onclick="updateContent()">تحديث</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function saveContent() {
+    const formData = new FormData(document.getElementById('contentForm'));
+    fetch('/admin/pages/add', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('حدث خطأ أثناء حفظ المحتوى');
+        }
+    });
+}
+
+function editContent(contentId) {
+    fetch(`/admin/pages/${contentId}`)
+    .then(response => response.json())
+    .then(data => {
+        const form = document.getElementById('editContentForm');
+        form.content_id.value = data.id;
+        form.page.value = data.page;
+        form.section.value = data.section;
+        form.content.value = data.content;
+        new bootstrap.Modal(document.getElementById('editContentModal')).show();
+    });
+}
+
+function updateContent() {
+    const formData = new FormData(document.getElementById('editContentForm'));
+    const contentId = formData.get('content_id');
+    fetch(`/admin/pages/${contentId}/update`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('حدث خطأ أثناء تحديث المحتوى');
+        }
+    });
+}
+
+function deleteContent(contentId) {
+    if (confirm('هل أنت متأكد من حذف هذا المحتوى؟')) {
+        fetch(`/admin/pages/${contentId}/delete`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('حدث خطأ أثناء حذف المحتوى');
+            }
+        });
+    }
+}
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">إضافة تصنيف جديد</h2>
+    <form method="POST" action="{{ url_for('add_category') }}">
+        <div class="mb-3">
+            <label for="name" class="form-label">اسم التصنيف</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">إضافة تصنيف</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

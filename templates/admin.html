@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('admin') }}">
+                            <i class="fas fa-home me-2"></i>
+                            لوحة التحكم
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_contact_requests') }}">
+                            <i class="fas fa-envelope me-2"></i>
+                            طلبات الاتصال
+                            {% if new_requests_count is defined and new_requests_count > 0 %}
+                            <span class="badge bg-danger">{{ new_requests_count }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('add_project') }}">
+                            <i class="fas fa-project-diagram me-2"></i>
+                            المشاريع
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_pages') }}">
+                            <i class="fas fa-file-alt me-2"></i>
+                            محتوى الصفحات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_settings') }}">
+                            <i class="fas fa-cog me-2"></i>
+                            الإعدادات
+                        </a>
+                    </li>
+					<li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('manage_categories') }}">
+                            <i class="fas fa-tags me-2"></i>
+                             إدارة التصنيفات
+                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('manage_users') }}">إدارة المشرفين</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">لوحة التحكم</h1>
+            </div>
+
+            <!-- Quick stats -->
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card text-white bg-dark">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title mb-0">طلبات الاتصال الجديدة</h6>
+                                    <h2 class="mt-2 mb-0">{{ new_requests_count if new_requests_count is defined else 0 }}</h2>
+                                </div>
+                                <i class="fas fa-envelope fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-white bg-dark">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title mb-0">المشاريع</h6>
+                                    <h2 class="mt-2 mb-0">{{ projects_count if projects_count is defined else 0 }}</h2>
+                                </div>
+                                <i class="fas fa-project-diagram fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-white bg-dark">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title mb-0">التصنيفات</h6>
+                                    <h2 class="mt-2 mb-0">{{ categories_count if categories_count is defined else 0 }}</h2>
+                                </div>
+                                <i class="fas fa-tags fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick actions -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">إجراءات سريعة</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-3">
+                                <a href="{{ url_for('add_project') }}" class="btn btn-outline-dark">
+                                    <i class="fas fa-plus me-2"></i>
+                                    إضافة مشروع جديد
+                                </a>
+                                <a href="{{ url_for('admin_contact_requests') }}" class="btn btn-outline-dark">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    عرض طلبات الاتصال
+                                </a>
+                                <a href="{{ url_for('admin_pages') }}" class="btn btn-outline-dark">
+                                    <i class="fas fa-edit me-2"></i>
+                                    تحرير محتوى الصفحات
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">آخر التحديثات</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if recent_activities is defined and recent_activities %}
+                            <div class="list-group list-group-flush">
+                                {% for activity in recent_activities %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ activity.title }}</h6>
+                                        <small>{{ activity.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ activity.description }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <p class="text-muted mb-0">لا توجد تحديثات حديثة</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects list -->
+            {% if projects is defined and projects %}
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">المشاريع</h5>
+                    <a href="{{ url_for('add_project') }}" class="btn btn-sm btn-dark">
+                        <i class="fas fa-plus me-1"></i>إضافة مشروع
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>الصورة</th>
+                                    <th>العنوان</th>
+                                    <th>التصنيف</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for project in projects %}
+                                <tr>
+                                    <td>
+                                        {% if project.image %}
+                                        <img src="{{ url_for('static', filename='uploads/' + project.image) }}" 
+                                             alt="{{ project.title }}" 
+                                             class="img-thumbnail" 
+                                             style="max-height: 50px;">
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ project.title }}</td>
+                                    <td>{{ project.category.name }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('edit_project', project_id=project.id) }}" 
+                                               class="btn btn-sm btn-outline-dark">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-dark" 
+                                                    onclick="deleteProject({{ project.id }})">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function deleteProject(projectId) {
+    if (confirm('هل أنت متأكد من حذف هذا المشروع؟')) {
+        fetch(`/project/${projectId}/delete`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('حدث خطأ أثناء حذف المشروع');
+            }
+        });
+    }
+}
+</script>
+{% endblock %}
+{% endblock %}

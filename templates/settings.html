@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">إعدادات الموقع</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('update_settings') }}" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="primary_color" class="form-label">اللون الأساسي</label>
+            <input type="color" class="form-control" id="primary_color" name="primary_color" value="{{ settings.primary_color }}">
+        </div>
+        <div class="mb-3">
+            <label for="logo" class="form-label">تحميل الشعار</label>
+            <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+        </div>
+        <div class="mb-3">
+            <label for="facebook" class="form-label">رابط فيسبوك</label>
+            <input type="url" class="form-control" id="facebook" name="facebook" value="{{ settings.facebook }}">
+        </div>
+        <div class="mb-3">
+            <label for="twitter" class="form-label">رابط تويتر</label>
+            <input type="url" class="form-control" id="twitter" name="twitter" value="{{ settings.twitter }}">
+        </div>
+        <div class="mb-3">
+            <label for="instagram" class="form-label">رابط إنستغرام</label>
+            <input type="url" class="form-control" id="instagram" name="instagram" value="{{ settings.instagram }}">
+        </div>
+        <div class="mb-3">
+            <label for="youtube" class="form-label">رابط يوتيوب</label>
+            <input type="url" class="form-control" id="youtube" name="youtube" value="{{ settings.youtube }}">
+        </div>
+        <div class="mb-3">
+            <label for="linkedin" class="form-label">رابط لينكدان</label>
+            <input type="url" class="form-control" id="linkedin" name="linkedin" value="{{ settings.linkedin }}">
+        </div>
+        <div class="mb-3">
+            <label for="tiktok" class="form-label">رابط تيك توك</label>
+            <input type="url" class="form-control" id="tiktok" name="tiktok" value="{{ settings.tiktok }}">
+        </div>
+        <div class="mb-3">
+            <label for="whatsapp" class="form-label">رابط واتساب</label>
+            <input type="url" class="form-control" id="whatsapp" name="whatsapp" value="{{ settings.whatsapp }}">
+        </div>
+        <div class="mb-3">
+            <label for="whatsapp" class="form-label">رقم واتساب</label>
+            <input type="tel" class="form-control" id="whatsapp_number" name="whatsapp_number" value="{{ settings.whatsapp_number }}">
+        </div>
+        <div class="mb-3">
+            <label for="company_location" class="form-label">موقع الشركة (خط العرض, خط الطول)</label>
+            <input type="text" class="form-control" id="company_location" name="company_location" value="{{ settings.company_location }}">
+        </div>
+        <div id="map" style="height: 400px;"></div>
+
+        <!-- Include Leaflet CSS and JS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+        <script>
+            // Initialize the map
+            var map = L.map('map').setView([25.276987, 55.296249], 13); // Default coordinates (Dubai)
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            // Marker for the company location
+            var marker = L.marker([25.276987, 55.296249]).addTo(map); // Default coordinates
+
+            // Update marker position based on input
+            document.getElementById('company_location').addEventListener('change', function() {
+                var coords = this.value.split(',');
+                if (coords.length === 2) {
+                    var lat = parseFloat(coords[0]);
+                    var lng = parseFloat(coords[1]);
+                    marker.setLatLng([lat, lng]);
+                    map.setView([lat, lng], 13);
+                }
+            });
+        </script>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('primary_color').addEventListener('input', function() {
+        document.body.style.backgroundColor = this.value;  // تغيير لون الخلفية
+    });
+</script>
+{% endblock %}

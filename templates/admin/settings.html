@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">إعدادات الموقع</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('update_settings') }}" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="primary_color" class="form-label">اللون الأساسي</label>
+            <input type="color" class="form-control" id="primary_color" name="primary_color" value="{{ settings.primary_color }}">
+        </div>
+        <div class="mb-3">
+            <label for="logo" class="form-label">تحميل الشعار</label>
+            <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('primary_color').addEventListener('input', function() {
+        document.body.style.backgroundColor = this.value;  // تغيير لون الخلفية
+    });
+</script>
+{% endblock %}

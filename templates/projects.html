@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-center mb-5">أعمالنا</h1>
+        </div>
+    </div>
+
+    <!-- Projects Filter -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-center">
+                <div class="btn-group" role="group">
+                    <a href="{{ url_for('projects', category='all') }}" 
+                       class="btn btn-outline-primary {% if active_category == 'all' %}active{% endif %}">
+                        الكل
+                    </a>
+                    {% for category in categories %}
+                    <a href="{{ url_for('projects', category=category.id) }}" 
+                       class="btn btn-outline-primary {% if active_category|string == category.id|string %}active{% endif %}">
+                        {{ category.name_ar }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="row g-4">
+        {% for project in projects %}
+        <div class="col-md-6 col-lg-4 project-item">
+            <div class="card h-100 shadow-sm hover-effect">
+                {% if project.main_image %}
+                <img src="{{ url_for('static', filename='uploads/' + project.main_image) }}" 
+                     class="card-img-top" alt="{{ project.title }}" style="height: 250px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ project.title }}</h5>
+                    <p class="card-text text-muted">{{ project.description[:150] }}...</p>
+                    <span class="badge bg-primary">
+                        {{ project.category_rel.name_ar }}
+                    </span>
+                    <a href="{{ url_for('project_detail', project_id=project.id) }}" 
+                       class="btn btn-primary stretched-link">عرض التفاصيل</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.hover-effect {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-effect:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+.btn-group .btn {
+    padding: 0.5rem 1.5rem;
+}
+.btn-group .btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+</style>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const filterValue = this.getAttribute('data-filter');
+            const projects = document.querySelectorAll('.project-item');
+            
+            projects.forEach(project => {
+                if (filterValue === 'all' || project.classList.contains(filterValue)) {
+                    project.style.display = 'block';
+                } else {
+                    project.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

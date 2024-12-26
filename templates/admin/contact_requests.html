@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">طلبات الاتصال</h2>
+    
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>رقم الهاتف</th>
+                    <th>الرسالة</th>
+                    <th>التاريخ</th>
+                    <th>الحالة</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr>
+                    <td>{{ req.name }}</td>
+                    <td><a href="mailto:{{ req.email }}">{{ req.email }}</a></td>
+                    <td>{{ req.phone or '-' }}</td>
+                    <td>{{ req.message[:100] }}{% if req.message|length > 100 %}...{% endif %}</td>
+                    <td>{{ req.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <span class="badge {% if req.status == 'new' %}bg-danger{% elif req.status == 'read' %}bg-warning{% else %}bg-success{% endif %}">
+                            {{ {'new': 'جديد', 'read': 'تم القراءة', 'responded': 'تم الرد'}[req.status] }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#messageModal{{ req.id }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-success update-status" data-request-id="{{ req.id }}" data-status="responded">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <form method="POST" action="{{ url_for('update_contact_request', request_id=req.id) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-info">تغيير الحالة</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('delete_contact_request', request_id=req.id) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">حذف</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Message Modal -->
+                <div class="modal fade" id="messageModal{{ req.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">تفاصيل الرسالة</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <strong>الاسم:</strong> {{ req.name }}
+                                </div>
+                                <div class="mb-3">
+                                    <strong>البريد الإلكتروني:</strong> {{ req.email }}
+                                </div>
+                                {% if req.phone %}
+                                <div class="mb-3">
+                                    <strong>رقم الهاتف:</strong> {{ req.phone }}
+                                </div>
+                                {% endif %}
+                                <div class="mb-3">
+                                    <strong>الرسالة:</strong>
+                                    <p class="mt-2">{{ req.message }}</p>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>التاريخ:</strong> {{ req.created_at.strftime('%Y-%m-%d %H:%M') }}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                                <a href="mailto:{{ req.email }}" class="btn btn-primary">
+                                    <i class="fas fa-reply me-1"></i> رد
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.update-status').forEach(button => {
+    button.addEventListener('click', function() {
+        const requestId = this.dataset.requestId;
+        const status = this.dataset.status;
+        
+        fetch(`/admin/contact-request/${requestId}/update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `status=${status}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+});
+
+// Mark as read when modal is opened
+document.querySelectorAll('[data-bs-target^="#messageModal"]').forEach(button => {
+    button.addEventListener('click', function() {
+        const requestId = this.closest('tr').querySelector('.update-status').dataset.requestId;
+        
+        fetch(`/admin/contact-request/${requestId}/update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'status=read'
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        height: 100vh;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1487958449943-2429e8be8625');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: white;
+        margin-top: -76px;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        padding: 2rem;
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 1s ease forwards 0.5s;
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 1s ease forwards 0.7s;
+    }
+
+    .hero-buttons {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 1s ease forwards 0.9s;
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .services-section {
+        padding: 6rem 0;
+        background-color: var(--light-bg);
+    }
+
+    .service-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    }
+
+    .service-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--light-bg);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        color: var(--secondary-color);
+        font-size: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .service-card:hover .service-icon {
+        background: var(--secondary-color);
+        color: white;
+    }
+
+    .stats-section {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+        padding: 6rem 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 1rem;
+    }
+
+    .projects-section {
+        padding: 6rem 0;
+    }
+
+    .project-card {
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 30px;
+        height: 300px;
+    }
+
+    .project-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: all 0.5s ease;
+    }
+
+    .project-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 2rem;
+        color: white;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .project-card:hover .project-overlay {
+        opacity: 1;
+    }
+
+    .project-card:hover .project-image {
+        transform: scale(1.1);
+    }
+
+    .testimonials-section {
+        background-color: var(--light-bg);
+        padding: 6rem 0;
+    }
+
+    .testimonial-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin: 1rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .testimonial-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1rem;
+    }
+
+    .testimonial-quote {
+        font-style: italic;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 6rem 0;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">نوايف الخليج للاستشارات الهندسية</h1>
+        <p class="hero-subtitle">نقدم حلولاً هندسية مبتكرة تجمع بين الإبداع والاستدامة</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('projects') }}" class="btn btn-primary btn-lg me-3">مشاريعنا</a>
+            <a href="{{ url_for('contact') }}" class="btn btn-outline-light btn-lg">تواصل معنا</a>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="services-section">
+    <div class="container">
+        <h2 class="text-center mb-5">خدماتنا</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="service-card text-center p-4">
+                    <div class="service-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h4 class="mb-3">التصميم المعماري</h4>
+                    <p class="text-muted">نقدم حلول تصميم معمارية مبتكرة تجمع بين الجمال والوظيفة، مع التركيز على الاستدامة والكفاءة</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service-card text-center p-4">
+                    <div class="service-icon">
+                        <i class="fas fa-pencil-ruler"></i>
+                    </div>
+                    <h4 class="mb-3">التصميم الداخلي</h4>
+                    <p class="text-muted">نصمم مساحات داخلية تعكس هوية المكان وتلبي احتياجات المستخدمين، مع الحفاظ على الطابع الجمالي</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service-card text-center p-4">
+                    <div class="service-icon">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <h4 class="mb-3">التخطيط العمراني</h4>
+                    <p class="text-muted">نخطط المدن والمجتمعات العمرانية بأسلوب مستدام وعصري يراعي احتياجات المجتمع والبيئة</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">150+</div>
+                    <div class="stat-label">مشروع منجز</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">سنوات خبرة</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">عميل سعيد</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">مهندس محترف</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Projects -->
+<section class="projects-section">
+    <div class="container">
+        <h2 class="text-center mb-5">مشاريعنا المميزة</h2>
+        <div class="row">
+            {% for project in featured_projects %}
+            <div class="col-md-4">
+                <div class="project-card">
+                    {% if project.main_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + project.main_image) }}" class="project-image" alt="{{ project.title }}">
+                    {% endif %}
+                    <div class="project-overlay">
+                        <h4>{{ project.title }}</h4>
+                        <p class="mb-3">{{ project.description[:100] }}...</p>
+                        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-outline-light">عرض المشروع</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials-section">
+    <div class="container">
+        <h2 class="text-center mb-5">آراء عملائنا</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="testimonial-card text-center">
+                    
+                    <p class="testimonial-quote">"تجربة رائعة مع فريق نوايف الخليج. احترافية عالية وتصاميم مبتكرة"</p>
+                    <h5 class="mb-1">محمد البارقي </h5>
+                    <p class="text-muted">مدير شركة عقارية</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card text-center">
+                    
+                    <p class="testimonial-quote">"فريق متميز يقدم حلول إبداعية تتجاوز التوقعات"</p>
+                    <h5 class="mb-1">خالد العتيبي</h5>
+                    <p class="text-muted">مستثمر عقاري</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card text-center">
+                    
+                    <p class="testimonial-quote">"الدقة في التنفيذ والالتزام بالمواعيد من أهم ما يميز نوايف الخليج"</p>
+                    <h5 class="mb-1">سعد الشمري</h5>
+                    <p class="text-muted">مطور عقاري</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section">
+    <div class="container">
+        <h2 class="mb-4">هل لديك مشروع تريد تنفيذه؟</h2>
+        <p class="lead mb-4">نحن هنا لمساعدتك في تحقيق رؤيتك المعمارية</p>
+        <a href="{{ url_for('contact') }}" class="btn btn-light btn-lg">تواصل معنا</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animate stats on scroll
+    function animateStats() {
+        const stats = document.querySelectorAll('.stat-number');
+        stats.forEach(stat => {
+            const target = parseInt(stat.textContent);
+            let count = 0;
+            const duration = 2000; // 2 seconds
+            const increment = target / (duration / 16); // 60fps
+
+            const counter = setInterval(() => {
+                count += increment;
+                if (count >= target) {
+                    stat.textContent = target + '+';
+                    clearInterval(counter);
+                } else {
+                    stat.textContent = Math.floor(count) + '+';
+                }
+            }, 16);
+        });
+    }
+
+    // Intersection Observer for stats animation
+    const statsSection = document.querySelector('.stats-section');
+    let animated = false;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !animated) {
+                animateStats();
+                animated = true;
+            }
+        });
+    });
+
+    observer.observe(statsSection);
+</script>
+{% endblock %}

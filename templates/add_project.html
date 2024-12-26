@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">إضافة مشروع جديد</h2>
+                    
+                    <form action="{{ url_for('add_project') }}" method="POST" enctype="multipart/form-data">
+                        <!-- Project Basic Info -->
+                        <div class="mb-3">
+                            <label for="title" class="form-label">عنوان المشروع</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">وصف المشروع</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                        </div>
+
+                        <!-- Project Category -->
+                        <div class="mb-3">
+                            <label for="category_id" class="form-label">تصنيف المشروع</label>
+                            <select class="form-select" id="category_id" name="category_id" required>
+                                <option value="" selected disabled>اختر التصنيف</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name_ar }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Project Details -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="location" class="form-label">الموقع</label>
+                                    <input type="text" class="form-control" id="location" name="location">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="area" class="form-label">المساحة</label>
+                                    <input type="text" class="form-control" id="area" name="area">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="completion_year" class="form-label">سنة الإنجاز</label>
+                            <input type="text" class="form-control" id="completion_year" name="completion_year">
+                        </div>
+
+                        <!-- Project Images -->
+                        <div class="mb-3">
+                            <label for="main_image" class="form-label">الصورة الرئيسية</label>
+                            <input type="file" class="form-control" id="main_image" name="main_image" accept="image/*" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="additional_images" class="form-label">صور إضافية</label>
+                            <input type="file" class="form-control" id="additional_images" name="additional_images" accept="image/*" multiple>
+                            <small class="text-muted">يمكنك اختيار عدة صور في نفس الوقت</small>
+                        </div>
+
+                        <!-- Featured Option -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="featured" name="featured">
+                            <label class="form-check-label" for="featured">عرض في الصفحة الرئيسية</label>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">إضافة المشروع</button>
+                            <a href="{{ url_for('admin') }}" class="btn btn-secondary">إلغاء</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-label {
+    font-weight: 500;
+}
+.card {
+    border-radius: 15px;
+}
+.btn {
+    padding: 8px 20px;
+    margin: 0 5px;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('main_image').onchange = function(e) {
+    if (this.files[0].size > 5242880) {
+        alert('Main image file is too large. Please select an image under 5MB.');
+        this.value = '';
+    }
+};
+
+document.getElementById('additional_images').onchange = function(e) {
+    for (let file of this.files) {
+        if (file.size > 5242880) {
+            alert('One or more additional images are too large. Please select images under 5MB each.');
+            this.value = '';
+            break;
+        }
+    }
+};
+</script>
+{% endblock %}

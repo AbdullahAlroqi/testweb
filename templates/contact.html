@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">اتصل بنا</h2>
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" action="{{ url_for('contact') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">الاسم</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">البريد الإلكتروني</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">رقم الجوال</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">الرسالة</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary px-5">إرسال</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if settings and (settings.phone_number or settings.whatsapp_number) %}
+            <div class="card shadow mt-4">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">معلومات الاتصال</h3>
+                    
+                    {% if settings.phone_number %}
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-phone text-primary me-3"></i>
+                        <div>
+                            <strong>هاتف:</strong>
+                            <a href="tel:{{ settings.phone_number }}" class="text-decoration-none">{{ settings.phone_number }}</a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if settings.whatsapp_number %}
+                    <div class="d-flex align-items-center">
+                        <i class="fab fa-whatsapp text-primary me-3"></i>
+                        <div>
+                            <strong>واتساب:</strong>
+                            <a href="https://wa.me/{{ settings.whatsapp_number }}" class="text-decoration-none" target="_blank">
+                                {{ settings.whatsapp_number }}
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 15px;
+}
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+</style>
+{% endblock %}

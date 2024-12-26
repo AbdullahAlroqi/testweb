@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل المشرف</title>
+</head>
+<body>
+    <h1>تعديل معلومات المشرف</h1>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="username" class="form-label">اسم المستخدم</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ admin.username }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">البريد الإلكتروني</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ admin.email }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">كلمة المرور (اتركه فارغًا إذا لم ترغب في تغييره)</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <button type="submit" class="btn btn-primary">تحديث</button>
+    </form>
+</body>
+</html>
+
+{% endblock %}

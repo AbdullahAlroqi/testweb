@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">إدارة المشرفين</h2>
+
+    <form method="POST" action="{{ url_for('add_admin') }}">
+        <div class="mb-3">
+            <label for="username" class="form-label">اسم المستخدم</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">البريد الإلكتروني</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">كلمة المرور</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">إضافة مشرف</button>
+    </form>
+
+    <hr>
+
+    <h3 class="mt-5">تغيير بيانات المشرفين</h3>
+    <form method="POST" action="{{ url_for('update_admin') }}">
+        <div class="mb-3">
+            <label for="admin_id" class="form-label">اختر المشرف</label>
+            <select class="form-select" id="admin_id" name="admin_id" required>
+                {% for admin in admins %}
+                <option value="{{ admin.id }}">{{ admin.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="new_email" class="form-label">البريد الإلكتروني الجديد</label>
+            <input type="email" class="form-control" id="new_email" name="new_email">
+        </div>
+        <div class="mb-3">
+            <label for="new_password" class="form-label">كلمة المرور الجديدة</label>
+            <input type="password" class="form-control" id="new_password" name="new_password">
+        </div>
+        <button type="submit" class="btn btn-warning">تحديث بيانات المشرف</button>
+    </form>
+</div>
+{% endblock %}
